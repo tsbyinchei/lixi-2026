@@ -69,10 +69,16 @@ function doGet(e) {
       }
     }
 
-    // --- 4. CHỌN GIẢI TỪ POOL CÒN LẠI ---
-    var prize = getLuckyMoneyFromPool(data);
-    if (prize === null) {
-      return responseJSON({ status: 'error', message: 'Đã hết lộc! Chúc bạn may mắn lần sau.' });
+    // --- 4. CHỌN GIẢI ---
+    var prize;
+    if (isTestUser) {
+      // Test user: giải ngẫu nhiên, KHÔNG trừ pool, vẫn lưu sheet để log
+      prize = getRandomTestPrize();
+    } else {
+      prize = getLuckyMoneyFromPool(data);
+      if (prize === null) {
+        return responseJSON({ status: 'error', message: 'Đã hết lộc! Chúc bạn may mắn lần sau.' });
+      }
     }
 
     // --- 5. LƯU VÀO SHEET ---
@@ -92,7 +98,7 @@ function normalizePhone(raw) {
   return String(raw).replace(/\s/g, '').replace(/^0+/, '');
 }
 
-// User test local: không bị check trùng (admin, SĐT 0123456789, MBBank, STK 0)
+// User test local: không bị check trùng, không trừ pool (admin, SĐT 0123456789, MBBank, STK 0)
 function isLocalTestUser(name, phoneDigits, stkInput, bankInput) {
   var nameOk = (name || "").toLowerCase().trim() === "admin";
   var phoneOk = String(phoneDigits || "").replace(/\D/g, "") === "0123456789";
@@ -101,14 +107,34 @@ function isLocalTestUser(name, phoneDigits, stkInput, bankInput) {
   return nameOk && phoneOk && stkOk && bankOk;
 }
 
+// Kiểm tra hàng sheet có phải từ test user không (để không tính vào pool)
+function isTestUserRow(row) {
+  if (!row || !row[1] || !row[4]) return false;
+  var phoneDigits = String(row[1]).replace(/\D/g, "");
+  var stk = String(row[4]).trim();
+  var bank = (row[5] || "").toString().toLowerCase();
+  var name = (row[2] || "").toString().toLowerCase().trim();
+  return name === "admin" && phoneDigits === "0123456789" && stk === "0" && bank.indexOf("mb") >= 0;
+}
+
+// Giải ngẫu nhiên cho test user (tỷ lệ 50-35-13-2, không trừ pool)
+function getRandomTestPrize() {
+  var rand = Math.random() * 100;
+  if (rand < 50) return 10000;
+  if (rand < 85) return 20000;
+  if (rand < 98) return 50000;
+  return 100000;
+}
+
 // Số lượng mỗi loại giải: 30x10k, 15x20k, 5x50k, 2x100k (tổng 52 bao)
 var PRIZE_LIMITS = { 10000: 30, 20000: 15, 50000: 5, 100000: 2 };
 
 function getLuckyMoneyFromPool(data) {
-  // Đếm số giải đã phát cho mỗi mệnh giá
+  // Đếm số giải đã phát (bỏ qua hàng từ test user - không trừ pool)
   var used = { 10000: 0, 20000: 0, 50000: 0, 100000: 0 };
   for (var i = 1; i < data.length; i++) {
     var row = data[i];
+    if (isTestUserRow(row)) continue; // Test user không tính vào pool
     if (row[3] === undefined || row[3] === null || row[3] === "") continue;
     var amount = parseInt(String(row[3]).replace(/,/g, ""), 10);
     if (used.hasOwnProperty(amount)) used[amount]++;

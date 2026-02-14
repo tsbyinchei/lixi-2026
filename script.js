@@ -1,6 +1,6 @@
 // ==========================================
 // THAY LINK GOOGLE APPS SCRIPT CỦA BẠN VÀO ĐÂY
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzJcUHA6VE2HcyOS0bxIyS_ghkKsCIqG3GhKl_k3DQsSOUrEX0IutulCfgYtVRLEUAr/exec'; 
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz7bRF2nWAIOJ7Z-HjzwqqSVPg0uMd_89D43CXUSxAiN1oGWu9k_CSRx9x4ZvwrPIzJ/exec'; 
 // ==========================================
 
 // Danh sách Ngân hàng (+ Khác để nhập tùy chỉnh)
