@@ -1,3 +1,79 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lì Xì Năm Mới 2026</title>
+    <link rel="icon" href="icon.ico" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="loadingOverlay">
+        <div class="spinner"></div>
+        <p>Đang xử lý...</p>
+    </div>
+
+    <div class="header-title">
+        <img src="icon.ico" alt="Logo" class="title-logo">
+        <h1>Lì Xì Xuân 2026</h1>
+    </div>
+    <p class="subtitle">Chọn một bao để nhận lộc may mắn 🧧</p>
+
+    <div class="grid-container" id="gridContainer">
+        </div>
+
+    <div id="infoModal" class="modal">
+        <div class="modal-content">
+            <h2 class="modal-title">🧧 Thông Tin Nhận Lì Xì</h2>
+            <p class="modal-desc">Bạn đã chọn bao lì xì này. Hãy điền thông tin để mở nhé!</p>
+            
+            <div class="form-group">
+                <label>Họ và Tên:</label>
+                <input type="text" id="userName" placeholder="Ví dụ: Nguyễn Văn A">
+            </div>
+            <div class="form-group">
+                <label>Số điện thoại (10 số):</label>
+                <input type="tel" id="userPhone" placeholder="0912345678" maxlength="10" inputmode="numeric" pattern="[0-9]*">
+            </div>
+            <div class="form-group custom-dropdown">
+                <label>Ngân Hàng:</label>
+                <input type="text" id="bankInput" placeholder="Chọn ngân hàng..." autocomplete="off">
+                <div id="bankListDropdown" class="bank-list"></div>
+            </div>
+            <div class="form-group" id="bankOtherWrap" style="display: none;">
+                <label>Tên ngân hàng (Khác):</label>
+                <input type="text" id="bankOtherInput" placeholder="Nhập tên ngân hàng của bạn">
+            </div>
+            <div class="form-group">
+                <label>Số Tài Khoản:</label>
+                <input type="number" id="userStk" placeholder="Nhập chính xác số TK">
+            </div>
+
+            <button class="confirm-btn" id="submitInfoBtn">MỞ LÌ XÌ NGAY</button>
+            <p id="formError"></p>
+        </div>
+    </div>
+
+    <div id="resultModal" class="modal">
+        <div class="modal-content result-content">
+            <h2 class="result-title">CHÚC MỪNG!</h2>
+            <p class="wish-text">Tiền về tiền về!</p>
+            <div class="prize-box">
+                <img id="prizeImg" src="" alt="Tiền lì xì" class="prize-money-img">
+                <span id="prizeAmount" class="prize-amount-text">0 VNĐ</span>
+            </div>
+            <button class="confirm-btn" onclick="finishSession()">Nhận Lì Xì</button>
+        </div>
+    </div>
+
+    <div id="duplicateModal" class="modal">
+        <div class="duplicate-modal-content">
+            <div class="duplicate-icon-wrap">
+                <i class="fas fa-shield-alt duplicate-icon"></i>
+            </div>
             <h3 class="duplicate-title">Thông tin đã được sử dụng</h3>
             <p class="duplicate-desc" id="duplicateDesc">Tài khoản hoặc số điện thoại này đã nhận lì xì trước đó.</p>
             <div class="duplicate-detail" id="duplicateDetail">
