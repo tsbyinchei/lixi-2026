@@ -1,5 +1,4 @@
 // ==========================================
-// THAY LINK GOOGLE APPS SCRIPT CỦA BẠN VÀO ĐÂY
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz7bRF2nWAIOJ7Z-HjzwqqSVPg0uMd_89D43CXUSxAiN1oGWu9k_CSRx9x4ZvwrPIzJ/exec'; 
 // ==========================================
 
@@ -20,9 +19,25 @@ document.addEventListener('DOMContentLoaded', () => {
     initGrid();
     initBankDropdown();
     initPhoneInput();
+    initModalBackdropClose();
     getIP();
     isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 });
+
+// Click ra ngoài nội dung modal để đóng (trừ resultModal phải bấm "Nhận Lì Xì")
+function initModalBackdropClose() {
+    document.querySelectorAll('.modal').forEach(modal => {
+        modal.addEventListener('click', (e) => {
+            if (e.target !== modal) return;
+            if (modal.id === 'resultModal') return;
+            modal.style.display = 'none';
+            if (modal.id === 'duplicateModal') document.getElementById('infoModal').style.display = 'flex';
+        });
+    });
+    document.querySelectorAll('.modal .modal-content, .modal .duplicate-modal-content, .modal .outofluck-modal-content').forEach(el => {
+        el.addEventListener('click', (e) => e.stopPropagation());
+    });
+}
 
 // Số điện thoại: chỉ cho phép nhập số, tối đa 10 ký tự
 function initPhoneInput() {
@@ -122,6 +137,7 @@ function handleCardClick(card, e) {
     // PC: Click trực tiếp mở (hover đã rung qua CSS)
     // Mobile: Click lần 2 mở (lần 1 đã rung)
     selectedEnvelope = card;
+    document.getElementById('formError').innerText = '';
     document.getElementById('infoModal').style.display = 'flex';
 }
 
@@ -146,7 +162,8 @@ document.getElementById('submitInfoBtn').onclick = async () => {
     if (!bank) {
         errorMsg.innerText = bankInputVal === 'Khác' ? "Vui lòng nhập tên ngân hàng!" : "Vui lòng chọn ngân hàng!"; return;
     }
-    
+    errorMsg.innerText = '';
+
     // Gửi dữ liệu
     document.getElementById('infoModal').style.display = 'none';
     document.getElementById('loadingOverlay').style.display = 'flex';
@@ -157,9 +174,22 @@ document.getElementById('submitInfoBtn').onclick = async () => {
         }).toString();
 
         const res = await fetch(`${SCRIPT_URL}?${query}`);
-        const data = await res.json();
-        
         document.getElementById('loadingOverlay').style.display = 'none';
+
+        let data;
+        try {
+            const text = await res.text();
+            data = text ? JSON.parse(text) : {};
+        } catch (parseErr) {
+            alert("Lỗi: Phản hồi từ máy chủ không hợp lệ. Vui lòng thử lại.");
+            document.getElementById('infoModal').style.display = 'flex';
+            return;
+        }
+        if (!res.ok) {
+            alert("Lỗi: " + (data.message || "Máy chủ lỗi, vui lòng thử lại."));
+            document.getElementById('infoModal').style.display = 'flex';
+            return;
+        }
 
         if (data.status === 'duplicate_stk') {
             showDuplicateModal('stk', { stk, bank });
@@ -168,11 +198,13 @@ document.getElementById('submitInfoBtn').onclick = async () => {
             showDuplicateModal('phone', { phone });
         } 
         else if (data.status === 'success') {
-            // Thành công -> Mở quà
             revealPrize(data.prize);
         } 
+        else if (data.status === 'error' && data.message && data.message.indexOf('hết lộc') >= 0) {
+            document.getElementById('outOfLuckModal').style.display = 'flex';
+        }
         else {
-            alert("Lỗi: " + data.message);
+            alert("Lỗi: " + (data.message || "Đã xảy ra lỗi."));
             document.getElementById('infoModal').style.display = 'flex';
         }
     } catch (e) {
@@ -252,5 +284,10 @@ function showDuplicateModal(type, data) {
 
 window.closeDuplicateModal = () => {
     document.getElementById('duplicateModal').style.display = 'none';
+    document.getElementById('formError').innerText = '';
     document.getElementById('infoModal').style.display = 'flex';
+};
+
+window.closeOutOfLuckModal = () => {
+    document.getElementById('outOfLuckModal').style.display = 'none';
 };

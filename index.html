@@ -31,24 +31,24 @@
             <p class="modal-desc">Bạn đã chọn bao lì xì này. Hãy điền thông tin để mở nhé!</p>
             
             <div class="form-group">
-                <label>Họ và Tên:</label>
+                <label for="userName">Họ và Tên (Trùng với tên tk thụ hưởng):</label>
                 <input type="text" id="userName" placeholder="Ví dụ: Nguyễn Văn A">
             </div>
             <div class="form-group">
-                <label>Số điện thoại (10 số):</label>
+                <label for="userPhone">Số điện thoại (10 số):</label>
                 <input type="tel" id="userPhone" placeholder="0912345678" maxlength="10" inputmode="numeric" pattern="[0-9]*">
             </div>
             <div class="form-group custom-dropdown">
-                <label>Ngân Hàng:</label>
+                <label for="bankInput">Ngân Hàng:</label>
                 <input type="text" id="bankInput" placeholder="Chọn ngân hàng..." autocomplete="off">
                 <div id="bankListDropdown" class="bank-list"></div>
             </div>
             <div class="form-group" id="bankOtherWrap" style="display: none;">
-                <label>Tên ngân hàng (Khác):</label>
+                <label for="bankOtherInput">Tên ngân hàng (Khác):</label>
                 <input type="text" id="bankOtherInput" placeholder="Nhập tên ngân hàng của bạn">
             </div>
             <div class="form-group">
-                <label>Số Tài Khoản:</label>
+                <label for="userStk">Số Tài Khoản:</label>
                 <input type="number" id="userStk" placeholder="Nhập chính xác số TK">
             </div>
 
@@ -88,6 +88,19 @@
             </div>
             <button class="btn-close-duplicate" onclick="closeDuplicateModal()">
                 <i class="fas fa-edit"></i> Điền lại thông tin
+            </button>
+        </div>
+    </div>
+
+    <div id="outOfLuckModal" class="modal">
+        <div class="outofluck-modal-content">
+            <div class="outofluck-icon-wrap">
+                <i class="fas fa-gift outofluck-icon"></i>
+            </div>
+            <h3 class="outofluck-title">Đã hết lộc!</h3>
+            <p class="outofluck-desc">Chúc bạn may mắn lần sau. 🧧</p>
+            <button class="btn-close-outofluck" onclick="closeOutOfLuckModal()">
+                <i class="fas fa-check"></i> Đã hiểu
             </button>
         </div>
     </div>
